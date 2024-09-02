@@ -6,7 +6,7 @@ This application has been built using Django in the cloud, along with AWS resour
 
 The system is built around managing user expenses and sending notifications asynchronously using AWS resources. The design focuses on handling user management, expense management, balance management, and email notifications efficiently. Below is a breakdown of the system components with key AWS integrations.
 
-![ Architecture Diagram of SplitWise Application](architecture.png)
+![ Architecture Diagram of SplitWise Application](architecture-updated.png)
 ### Components :
 - Django Application exhibiting MTV(Model-Template-View) framework (Hosted on AWS Elastic Beanstalk)
 - AWS RDS Managed service (Model)
