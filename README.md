@@ -174,41 +174,41 @@ Inform users about their expenses and balances through email notifications.
 
 ### 1. User Class:
 
-- Attributes:
-    - `user_id`
+- Attributes: 
+    - `userid`
     - `name`
     - `email`
     - `mobile_number`
 
 - Methods:
-    - `create`
-    - `update`
-    - `get_user_by_id`
+    - `get_users` (Implemented in `UserView.get`)
+    - `create_user` (Implemented in `UserView.post`)
 
 ### 2. Expense Class:
 
 - Attributes:
-    - `expense_id`
+    - `expenseid`
     - `amount`
     - `split_type`
     - `created_by`
+    - `paid_by`
     - `participants`
+    - `split_values`
 
 - Methods:
-    - `create`
-    - `add_participant`
-    - `split_expense`
+    - `get_expenses` (Implemented in `ExpenseView.get`)
+    - `create_expense` (Implemented in `ExpenseView.post`)
+    - `calculate_shares` (Implemented in `ExpenseView`) 
 
 ### 3. Balance Class:
 
 - Attributes:
-    - `balance_id`
+    - `balanceid`
     - `from_user`
     - `to_user`
     - `amount`
     - `expense`
 
 - Methods:
-    - `get_balance_by_user`
-    - `update_balance`
+    - `get_balance` (Implemented in `BalanceView.get`)
 
