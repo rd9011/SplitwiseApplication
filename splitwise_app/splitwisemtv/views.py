@@ -2,6 +2,7 @@ from django.views import View
 from django.shortcuts import render, redirect
 from .models import User, Expense, Balance
 from django.urls import reverse
+from django.contrib import messages
 
 class UserView(View):
     def get(self, request):
@@ -31,11 +32,21 @@ class ExpenseView(View):
     def post(self, request):
         # Logic to create a new expense
         paid_by_id = request.POST['paid_by']
-        amount = request.POST['amount']
+        amount = round(float(request.POST['amount']), 2)
         split_type = request.POST['split_type']
         description = request.POST['description']
         participants = request.POST.getlist('participants')
 
+        # Limiting participants to 1000
+        if len(participants) > 1000:
+            messages.error(request, "Participant limit exceeded. Maximum 1000 participants allowed per expense.")
+            return redirect(reverse('expenses_list'))
+        
+        # amount should not exceed 1cr
+        if amount > 10000000:
+            messages.error(request, "Expense amount exceeds the maximum limit of 1,00,00,000 INR.")
+            return redirect(reverse('expenses_list'))
+        
         paid_by = User.objects.get(pk=paid_by_id)
         expense = Expense.objects.create(paid_by=paid_by, amount=amount, split_type=split_type, description=description)
         expense.participants.set(participants)
