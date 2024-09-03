@@ -56,22 +56,37 @@ class ExpenseView(View):
 
         return redirect(reverse('expenses_list'))
 
-    def calculate_shares(self, expense, split_type, participants, post_data):
+    def calculate_shares(self, expense, split_type, participants, post_data, request):
         # Logic to calculate and store the shares based on the split_type
         if split_type == 'EQUAL':
             share = expense.amount / len(participants)
             for participant in participants:
                 Balance.objects.create(from_user=User.objects.get(pk=participant), to_user=expense.paid_by, amount=share)
         elif split_type == 'EXACT':
+            total_share = 0
             for participant in participants:
-                share = post_data[f'share_{participant}']
+                share = round(float(post_data[f'share_{participant}']), 2)
+                total_share += share
                 Balance.objects.create(from_user=User.objects.get(pk=participant), to_user=expense.paid_by, amount=share)
+            # Logic on total share matching the expense amount
+            if total_share != expense.amount:
+                messages.error(request, 'Total shares do not match the expense amount.')
+                expense.delete() # deleting if it leads to error
+                return  
         elif split_type == 'PERCENTAGE':
+            total_percentage = 0
             for participant in participants:
-                share_percentage = post_data[f'percentage_{participant}']
-                share = expense.amount * (share_percentage / 100)
+                share_percentage = float(post_data[f'percentage_{participant}'])
+                total_percentage += share_percentage
+                share = round(expense.amount * (share_percentage / 100),2)
                 Balance.objects.create(from_user=User.objects.get(pk=participant), to_user=expense.paid_by, amount=share)
 
+            # Logic to validate if total percentage equals 100%
+            if total_percentage != 100:
+                messages.error(request, 'Total percentage must be equal to 100%.')
+                expense.delete()
+                return
+            
 class BalanceView(View):
     def get(self, request):
         balances = Balance.objects.all()
