@@ -15,8 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path 
+from splitwisemtv import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('users/', views.UserView.as_view(), name='users_list'),
+    path('expenses/', views.ExpenseView.as_view(), name='expenses_list'),
+    path('balances/', views.BalanceView.as_view(), name='balances_list'),
 ]
